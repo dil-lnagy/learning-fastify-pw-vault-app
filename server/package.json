@@ -1,0 +1,33 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsnd --exit-child --transpile-only src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.1",
+    "@types/lodash": "^4.14.202",
+    "pino-pretty": "^10.3.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^9.2.0",
+    "@fastify/cors": "^8.5.0",
+    "@fastify/jwt": "^7.2.4",
+    "@typegoose/typegoose": "^12.0.0",
+    "argon2": "^0.31.2",
+    "crypto-js": "^4.2.0",
+    "fastify": "^4.25.2",
+    "fastify-zod": "^1.4.0",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.0.3",
+    "pino": "^8.17.2",
+    "zod": "^3.22.4"
+  }
+}
