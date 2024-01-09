@@ -4,6 +4,7 @@ import {
   FormLabel,
   Input,
   FormErrorMessage,
+  Button,
 } from "@chakra-ui/react";
 import FormWrapper from "./FormWrapper";
 import {
@@ -12,12 +13,19 @@ import {
   UseFormRegister,
   useForm,
 } from "react-hook-form";
-import { hashPassword } from "../crypto";
+import { generateVaultKey, hashPassword } from "../crypto";
 import { useMutation } from "react-query";
-import { HTMLInputTypeAttribute } from "react";
+import { Dispatch, HTMLInputTypeAttribute, SetStateAction } from "react";
 import { registerUser } from "../api";
+import { Step, VaultItem } from "../pages";
 
-function RegisterForm() {
+function RegisterForm({
+  setStep,
+  setVaultKey,
+}: {
+  setStep: Dispatch<SetStateAction<Step>>;
+  setVaultKey: Dispatch<SetStateAction<string>>;
+}) {
   const {
     handleSubmit,
     register,
@@ -30,13 +38,31 @@ function RegisterForm() {
     hashedPassword: string;
   }>();
 
-  const mutation = useMutation(registerUser);
+  const mutation = useMutation(registerUser, {
+    onSuccess: ({ salt, vault }) => {
+      const hashedPassword = getValues("hashedPassword");
+      const email = getValues("email");
+      const vaultKey = generateVaultKey({ email, hashedPassword, salt });
+
+      window.sessionStorage.setItem("vk", vaultKey);
+      window.sessionStorage.setItem("vault", "");
+
+      setStep("vault");
+      setVaultKey(vaultKey);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
   return (
     <FormWrapper
       onSubmit={handleSubmit(() => {
+        const email = getValues("email");
         const password = getValues("password");
         const hashedPassword = hashPassword(password);
-        setValue("hashedPassword", hashedPassword);
+        setValue("hashedPassword", hashedPassword); // why set if not yet used?
+
+        mutation.mutate({ email, hashedPassword });
       })}
     >
       <Heading>Register</Heading>
@@ -68,6 +94,8 @@ function RegisterForm() {
         }}
         errors={errors}
       />
+
+      <Button type="submit">Register</Button>
     </FormWrapper>
   );
 }

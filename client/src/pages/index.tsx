@@ -6,13 +6,23 @@ import Vault from "../comonents/Vault";
 
 import styles from "../styles/Home.module.css";
 
+export type VaultItem = {
+  website: string;
+  username: string;
+  password: string;
+};
+
+export type Step = "login" | "register" | "vault";
+
 export default function Home() {
-  const [step, setStep] = useState<"login" | "register" | "vault">("register");
+  const [step, setStep] = useState<Step>("register");
+  const [vault, setVault] = useState<VaultItem[]>([]);
+  const [vaultKey, setVaultKey] = useState<string>("");
 
   const renderMain = () => {
     switch (step) {
       case "register":
-        return <RegisterForm />;
+        return <RegisterForm setStep={setStep} setVaultKey={setVaultKey} />;
       case "login":
         return <LoginForm />;
       case "vault":

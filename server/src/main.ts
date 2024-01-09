@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import createServer from "./utils/createServer";
 import logger from "./utils/logger";
-import { disconnectFromDb } from "./utils/db";
+import { connectToDb, disconnectFromDb } from "./utils/db";
 
 function gracefulShutdown(signal: string, app: FastifyInstance) {
   process.on(signal, async () => {
@@ -19,8 +19,9 @@ async function main() {
   const app = createServer();
 
   try {
-    const url = await app.listen({ port: 4000, host: "0.0.0.0" });
+    const url = await app.listen({ port: 4000, host: "127.0.0.1" });
     logger.info(`Server is ready at ${url}`);
+    await connectToDb();
   } catch (err) {
     logger.error(err);
     process.exit(1);
