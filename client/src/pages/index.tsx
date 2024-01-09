@@ -15,7 +15,7 @@ export type VaultItem = {
 export type Step = "login" | "register" | "vault";
 
 export default function Home() {
-  const [step, setStep] = useState<Step>("register");
+  const [step, setStep] = useState<Step>("vault");
   const [vault, setVault] = useState<VaultItem[]>([]);
   const [vaultKey, setVaultKey] = useState<string>("");
 
