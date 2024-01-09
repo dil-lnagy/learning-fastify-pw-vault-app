@@ -1,4 +1,5 @@
 import fastify, { FastifyReply, FastifyRequest } from "fastify";
+import fastifyEnv from "@fastify/env";
 import cors from "@fastify/cors";
 import { CORS_ORIGIN } from "../constants";
 import jwt from "@fastify/jwt";
@@ -11,6 +12,10 @@ import vaultRoutes from "../modules/vault/vault.route";
 function createServer() {
   const app = fastify();
 
+  app.register(fastifyEnv, {
+    dotenv: true,
+    schema: envSchema,
+  });
   app.register(cors, { origin: CORS_ORIGIN, credentials: true });
 
   app.register(jwt, {
@@ -51,3 +56,13 @@ function createServer() {
 }
 
 export default createServer;
+
+const envSchema = {
+  type: "object",
+  required: ["ENVIRONMENT"],
+  properties: {
+    ENVIRONMENT: {
+      type: "string",
+    },
+  },
+};
