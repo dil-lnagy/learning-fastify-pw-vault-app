@@ -3,6 +3,8 @@ import { VaultItem } from "../pages";
 import FormWrapper from "./FormWrapper";
 import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { encryptVault } from "../crypto";
+import { useMutation } from "react-query";
+import { saveVault } from "../api";
 
 function Vault({
   vault = [],
@@ -11,25 +13,28 @@ function Vault({
   vault: VaultItem[];
   vaultKey: string;
 }) {
-  const { control, register, handleSubmit } = useForm();
+  const { control, register, handleSubmit } = useForm({
+    defaultValues: { vault },
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "vault",
   });
+
+  const mutation = useMutation(saveVault);
   return (
     <FormWrapper
       onSubmit={handleSubmit(({ vault }) => {
-        
         window.sessionStorage.setItem("vault", JSON.stringify(vault));
-        
+
         const encryptedVault = encryptVault({
           vault: JSON.stringify({ vault }),
           vaultKey,
         });
 
-        
-
+        window.sessionStorage.setItem("vault", JSON.stringify(vault));
+        mutation.mutate({ encryptedVault });
       })}
     >
       {fields.map((field, index) => {

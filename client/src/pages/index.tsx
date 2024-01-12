@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RegisterForm from "../comonents/RegisterForm";
 import LoginForm from "../comonents/LoginForm";
 import Vault from "../comonents/Vault";
@@ -15,18 +15,35 @@ export type VaultItem = {
 export type Step = "login" | "register" | "vault";
 
 export default function Home() {
-  const [step, setStep] = useState<Step>("vault");
+  const [step, setStep] = useState<Step>("register");
   const [vault, setVault] = useState<VaultItem[]>([]);
   const [vaultKey, setVaultKey] = useState<string>("");
+
+  useEffect(() => {
+    const vault = window.sessionStorage.getItem("vault");
+    const vaultKey = window.sessionStorage.getItem("vaultKey");
+    if (vault) setVault(JSON.parse(vault));
+    if (vaultKey) {
+      setVaultKey(JSON.parse(vaultKey));
+      setStep("vault");
+    }
+    console.log(vault);
+  }, []);
 
   const renderMain = () => {
     switch (step) {
       case "register":
         return <RegisterForm setStep={setStep} setVaultKey={setVaultKey} />;
       case "login":
-        return <LoginForm />;
+        return (
+          <LoginForm
+            setStep={setStep}
+            setVault={setVault}
+            setVaultKey={setVaultKey}
+          />
+        );
       case "vault":
-        return <Vault />;
+        return <Vault vault={vault} vaultKey={vaultKey} />;
     }
   };
   return (

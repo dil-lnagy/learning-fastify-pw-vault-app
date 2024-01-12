@@ -22,7 +22,7 @@ export async function updateVaultHandler(
 
     return reply.code(200).send("Vault updated");
   } catch (e) {
-    logger.error(e, "Error updating vault");
+    logger.error(e, "error updating vault");
     return reply.code(500).send(e);
   }
 }
